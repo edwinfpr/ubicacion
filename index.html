@@ -1,42 +1,64 @@
-<!DOCTYPE html>
 <html>
-<body>
+<head> 
+    <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1.0">
+    <title>Maps JavaScript API</title>
+  <style> 
+      #map {
+        height: 100%;
+      }
+     
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+  </style> 
+</head>  
+  <body>
+  <div id="geolocation-test"></div>
+  <script>
 
-<p id="demo"></p>
+    (function(){
+      var content = document.getElementById("geolocation-test");
 
-<script>
-var x = document.getElementById("demo");
+          if (navigator.geolocation)
+          {
+            navigator.geolocation.getCurrentPosition(function(objPosition)
+            {
+              var lon = objPosition.coords.longitude;
+              var lat = objPosition.coords.latitude;
 
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition, showError);
-  } else { 
-    x.innerHTML = "Geolocation is not supported by this browser.";
-  }
-}
+              content.innerHTML = "<p><strong>Latitud:</strong> " + lat + "</p><p><strong>Longitud:</strong> " + lon + "</p>";
 
-function showPosition(position) {
-  x.innerHTML = "Latitude: " + position.coords.latitude + 
-  "<br>Longitude: " + position.coords.longitude;
-}
+            }, function(objPositionError)
+            {
+              switch (objPositionError.code)
+              {
+                case objPositionError.PERMISSION_DENIED:
+                  content.innerHTML = "No se ha permitido el acceso a la posición del usuario.";
+                break;
+                case objPositionError.POSITION_UNAVAILABLE:
+                  content.innerHTML = "No se ha podido acceder a la información de su posición.";
+                break;
+                case objPositionError.TIMEOUT:
+                  content.innerHTML = "El servicio ha tardado demasiado tiempo en responder.";
+                break;
+                default:
+                  content.innerHTML = "Error desconocido.";
+              }
+            }, {
+              maximumAge: 75000,
+              timeout: 15000
+            });
+          }
+          else
+          {
+            content.innerHTML = "Su navegador no soporta la API de geolocalización.";
+          }
+    })();
+      
+  </script>
 
-function showError(error) {
-  switch(error.code) {
-    case error.PERMISSION_DENIED:
-      x.innerHTML = "User denied the request for Geolocation."
-      break;
-    case error.POSITION_UNAVAILABLE:
-      x.innerHTML = "Location information is unavailable."
-      break;
-    case error.TIMEOUT:
-      x.innerHTML = "The request to get user location timed out."
-      break;
-    case error.UNKNOWN_ERROR:
-      x.innerHTML = "An unknown error occurred."
-      break;
-  }
-}
-</script>
-
-</body>
+  </body> 
 </html>
